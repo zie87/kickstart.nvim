@@ -37,11 +37,26 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now :)
 --]]
--- Set <space> as the leader key
+
+-- disable netrw at the very start of your init.lua
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- Set '-' as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = '-'
+vim.g.maplocalleader = '-'
+
+-- NOTE: You should make sure your terminal supports this
+vim.o.termguicolors = true
+
+vim.cmd ":command! WQ wq"
+vim.cmd ":command! Wq wq"
+vim.cmd ":command! Wqa wqa"
+vim.cmd ":command! W w"
+vim.cmd ":command! Q q"
+vim.cmd ":command! Qa qa"
 
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
@@ -110,7 +125,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',           opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -152,10 +167,37 @@ require('lazy').setup({
 
   {
     -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    'NTBBloodbath/doom-one.nvim',
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      -- Add color to cursor
+      vim.g.doom_one_cursor_coloring = true
+      -- Set :terminal colors
+      vim.g.doom_one_terminal_colors = true
+      -- Enable italic comments
+      vim.g.doom_one_italic_comments = true
+      -- Enable TS support
+      vim.g.doom_one_enable_treesitter = true
+      -- Color whole diagnostic text or only underline
+      vim.g.doom_one_diagnostics_text_color = false
+      -- Enable transparent background
+      vim.g.doom_one_transparent_background = false
+      -- Pumblend transparency
+      vim.g.doom_one_pumblend_enable = false
+      vim.g.doom_one_pumblend_transparency = 20
+      -- Plugins integration
+      vim.g.doom_one_plugin_neorg = true
+      vim.g.doom_one_plugin_barbar = false
+      vim.g.doom_one_plugin_telescope = true
+      vim.g.doom_one_plugin_neogit = true
+      vim.g.doom_one_plugin_nvim_tree = true
+      vim.g.doom_one_plugin_dashboard = false
+      vim.g.doom_one_plugin_startify = false
+      vim.g.doom_one_plugin_whichkey = true
+      vim.g.doom_one_plugin_indent_blankline = true
+      vim.g.doom_one_plugin_vim_illuminate = false
+      vim.g.doom_one_plugin_lspsaga = false
+      vim.cmd.colorscheme 'doom-one'
     end,
   },
 
@@ -165,8 +207,8 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        icons_enabled = false,
-        theme = 'onedark',
+        icons_enabled = true,
+        theme = 'auto',
         component_separators = '|',
         section_separators = '',
       },
@@ -183,7 +225,10 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',          opts = {} },
+
+  -- add rainbow brackets
+  { 'hiphish/rainbow-delimiters.nvim' },
 
   -- Fuzzy Finder (files, lsp, etc)
   {
@@ -203,6 +248,7 @@ require('lazy').setup({
           return vim.fn.executable 'make' == 1
         end,
       },
+      'nvim-telescope/telescope-file-browser.nvim',
     },
   },
 
@@ -218,8 +264,8 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  --  require 'kickstart.plugins.autoformat',
+  --  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -228,6 +274,11 @@ require('lazy').setup({
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
   -- { import = 'custom.plugins' },
+  require 'custom.plugins.autoformat',
+  require 'custom.plugins.debug',
+  require 'custom.plugins.tree',
+  require 'custom.plugins.trouble',
+  require 'custom.plugins.colorizer',
 }, {})
 
 -- [[ Setting options ]]
@@ -268,8 +319,12 @@ vim.o.timeoutlen = 300
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
--- NOTE: You should make sure your terminal supports this
-vim.o.termguicolors = true
+
+vim.o.splitbelow = true       -- put new windows below current
+vim.o.splitright = true       -- put new windows right of current
+
+vim.wo.cursorline = true      -- enable highlighting of the current line
+vim.wo.colorcolumn = "80,120" -- line wisth markers
 
 -- [[ Basic Keymaps ]]
 
@@ -307,6 +362,7 @@ require('telescope').setup {
 
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
+pcall(require("telescope").load_extension, "file_browser")
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -326,6 +382,7 @@ vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { de
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
+vim.keymap.set("n", "<leader>sr", "<cmd>Telescope file_browser<CR>", { desc = 'File Browser' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -333,8 +390,9 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
-
+    ensure_installed = { 'c', 'cpp', 'doxygen', 'rust', 'ada', 'zig', 'lua', 'luadoc', 'elixir', 'python', 'vimdoc',
+      'vim', 'bash', 'devicetree', 'dockerfile', 'meson', 'cmake', 'rst', 'markdown' },
+    ignore_install = { 'haskell', 'javascript' },
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
 
@@ -402,6 +460,15 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end, { desc = "Toogle trouble window" })
+vim.keymap.set("n", "<leader>xw", function() require("trouble").toggle("workspace_diagnostics") end,
+  { desc = "Open Workspace Diagnostics" })
+vim.keymap.set("n", "<leader>xd", function() require("trouble").toggle("document_diagnostics") end,
+  { desc = "Open Document Diagnostics" })
+vim.keymap.set("n", "<leader>xq", function() require("trouble").toggle("quickfix") end, { desc = "Open Quickfix" })
+vim.keymap.set("n", "<leader>xl", function() require("trouble").toggle("loclist") end, { desc = "Open LocList" })
+
+
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
@@ -456,6 +523,7 @@ require('which-key').register {
   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>x'] = { name = 'Diagnostics', _ = 'which_key_ignore' },
 }
 
 -- mason-lspconfig requires that these setup functions are called in this order
@@ -472,7 +540,7 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  -- clangd = {},
+  clangd = {},
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
