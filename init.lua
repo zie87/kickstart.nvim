@@ -279,6 +279,8 @@ require('lazy').setup({
   require 'custom.plugins.tree',
   require 'custom.plugins.trouble',
   require 'custom.plugins.colorizer',
+  require 'custom.plugins.tmux',
+  require 'custom.plugins.treesj',
 }, {})
 
 -- [[ Setting options ]]
