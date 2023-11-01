@@ -281,6 +281,7 @@ require('lazy').setup({
   require 'custom.plugins.colorizer',
   require 'custom.plugins.tmux',
   require 'custom.plugins.treesj',
+  require 'custom.plugins.chatgpt',
 }, {})
 
 -- [[ Setting options ]]
