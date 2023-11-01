@@ -53,7 +53,7 @@ return {
         local function buf_set_keymap(...)
           vim.api.nvim_buf_set_keymap(bufnr, ...)
         end
-        local opts = { noremap = true, silent = true , desc = "[F]ormat current buffer"}
+        local opts = { noremap = true, silent = true, desc = "[F]ormat current buffer" }
         buf_set_keymap("n", "<leader>f", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
 
         -- Create an autocmd that will run *before* we save the buffer.
