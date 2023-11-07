@@ -46,7 +46,7 @@ vim.g.loaded_netrwPlugin = 1
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are required (otherwise wrong leader will be used)
 vim.g.mapleader = '-'
-vim.g.maplocalleader = '-'
+vim.g.maplocalleader = '#'
 
 -- NOTE: You should make sure your terminal supports this
 vim.o.termguicolors = true
@@ -281,7 +281,8 @@ require('lazy').setup({
   require 'custom.plugins.colorizer',
   require 'custom.plugins.tmux',
   require 'custom.plugins.treesj',
-  require 'custom.plugins.chatgpt',
+  -- require 'custom.plugins.chatgpt',
+  require 'custom.plugins.neorg',
 }, {})
 
 -- [[ Setting options ]]
@@ -549,7 +550,6 @@ local servers = {
   -- rust_analyzer = {},
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
-
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
